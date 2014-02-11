@@ -57,7 +57,7 @@ for($i = 1; $i <= $pageCount; $i++){
         echo "<a href=\"matchhistory.php?page=$i\">$i</a> ";
     }
 }
-echo "</center>";
+echo "</center><br/>";
 
 
 $start = ($page * $matchesPerPage) - $matchesPerPage;
