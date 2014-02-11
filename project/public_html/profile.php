@@ -3,7 +3,6 @@
 include_once "functions/html.php";
 include_once "classes/DB.php";
 include_once "classes/match.php";
-include_once "classes/profile.php";
 
 if(!isset($_GET['id'])){
    
