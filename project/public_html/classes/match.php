@@ -168,7 +168,6 @@ class Match{
         $DB->query($updateQueryLoser);
         
         //Add wins and losses
-        
         if($isTeam == true){
             $incrementQuery1 = "UPDATE teams SET wins = wins + 1 WHERE teams.teamID = '".(int)$team1."'";
             $incrementQuery2 = "UPDATE teams SET losses = losses + 1 WHERE teams.teamID = '".(int)$team2."'";
