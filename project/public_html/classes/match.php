@@ -49,20 +49,9 @@ class Match{
         return $teamID;
     }
 
-    public function createMatch($team1, $team2, $winScore, $lossScore, $isTeam, $emulate = FALSE){ //takes ID from teams or names from players
+    public function createMatch($team1, $team2, $winScore, $lossScore, $isTeam, $emulate = FALSE, $id = NULL){ //takes ID from teams or names from players
     
         global $DB;
-        
-        if($emulate == FALSE){
-            
-            if($isTeam == true){
-                $query = "INSERT INTO matches (matchID, timeCreated, winnerID, loserID, winScore, lossScore, team) 
-                          VALUES ('', '" . date("Y-m-d H:i:s") . "', '".(int)$team1."', '".(int)$team2."', '".(int)$winScore."', '".(int)$lossScore."', 1)";
-            } else{
-                $query = "INSERT INTO matches (matchID, timeCreated, winnerID, loserID, winScore, lossScore, team) 
-                          VALUES ('', '" . date("Y-m-d H:i:s") . "', '".(int)$team1."', '".(int)$team2."', '".(int)$winScore."', '".(int)$lossScore."', 0)";
-            }
-        }
         
         if($isTeam == true){
             $ratingQuery1 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team1."'";
@@ -73,8 +62,7 @@ class Match{
             $ratingQuery2 = "SELECT ranking FROM players WHERE playerID = '".(int)$team2."'";
         }
     
-        $result = $DB->query($query);
-        $matchID = mysql_insert_id();
+        
         
         $data1 = $DB->query($ratingQuery1);
         $data2 = $DB->query($ratingQuery2);
@@ -137,6 +125,36 @@ class Match{
         $newRating1 = $rating1 + $pointsWon;
         $newRating2 = $rating2 + $pointsLost;
         
+        if($emulate == FALSE){
+            
+            if($isTeam == true){
+                $query = "INSERT INTO matches (matchID, timeCreated, winnerID, loserID, winScore, lossScore, team, points) 
+                          VALUES ('', '" . date("Y-m-d H:i:s") . "',
+                          '".(int)$team1."',
+                          '".(int)$team2."',
+                          '".(int)$winScore."',
+                          '".(int)$lossScore."',
+                          1, 
+                          '". (double)$pointsWon ."')";
+            } else{
+                $query = "INSERT INTO matches (matchID, timeCreated, winnerID, loserID, winScore, lossScore, team, points) 
+                          VALUES ('', '" . date("Y-m-d H:i:s") . "',
+                          '".(int)$team1."',
+                          '".(int)$team2."',
+                          '".(int)$winScore."',
+                          '".(int)$lossScore."',
+                          0,
+                          '". (double)$pointsWon ."')";
+            }
+        } else{
+            $query = "UPDATE matches 
+                      SET points = '". $pointsWon ."'
+                      WHERE matchID = '". (int)$id ."'
+                      ";
+        }
+        
+        
+        
         //change ratings
         if($isTeam){
             $updateQueryWinner = "UPDATE `teams` SET `ranking` = $newRating1 WHERE `teams`.`teamID` ='".(int)$team1."'";
@@ -166,7 +184,10 @@ class Match{
         //echo "5: " . $score1 . ", " . $score2 . "<br />";
         
         //echo "Succesfully Created Match \"" . $matchID . "\"."; //MatchID is always 0, dunno why :(
-            
+        
+        $result = $DB->query($query);
+        $matchID = mysql_insert_id();
+        
         return $matchID;
     }
     
@@ -267,13 +288,19 @@ class Match{
             
         }
 
-    public function printRecentlyPlayedMatches($start, $count){
+    public function printRecentlyPlayedMatches($start, $count, $id = -1){
         
         global $DB;
+        
+        $cleanId = (int) $DB->escape($id);
+        
         $odd = FALSE;
-            
-        $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team FROM matches ORDER BY timeCreated DESC LIMIT $start,$count");
-         
+        if($id < 0){            
+            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points FROM matches ORDER BY timeCreated DESC LIMIT $start,$count");
+        }else{
+            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points FROM matches ORDER BY timeCreated DESC LIMIT $start,$count");
+        }
+        
         echo"<br/>
             <div align=\"center\">
                 <table>
@@ -283,6 +310,7 @@ class Match{
                         <th>Winner Score</th>
                         <th>Loser Score</th>
                         <th>Loser(s)</th>
+                        <th>Points Won</th>
                     </tr>";
                     
         while($matchRow = mysql_fetch_array($matchResult, MYSQL_BOTH)){
@@ -400,7 +428,16 @@ class Match{
             }else{
                 echo $lossName;
             }
-            echo"</td></tr>";
+            echo "</td>";
+            
+            if($odd){
+                echo "<td id=\"odd\">";
+            } else{
+                echo "<td>";
+            }
+            
+            echo " + {$matchRow['points']}</td>";
+            echo"</tr>";
 
         }
 

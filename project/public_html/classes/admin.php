@@ -31,12 +31,12 @@ class Admin{
         global $DB;
         global $match;
         
-        $result = $DB->query("SELECT winnerID, loserID, winScore, lossScore, team
+        $result = $DB->query("SELECT matchID, winnerID, loserID, winScore, lossScore, team
                               FROM matches
                               ORDER BY matchID ASC");
                               
         while($obj = mysql_fetch_object($result)){
-            $match->createMatch($obj->winnerID, $obj->loserID, $obj->winScore, $obj->lossScore, $obj->team, $emulate = TRUE);
+            $match->createMatch($obj->winnerID, $obj->loserID, $obj->winScore, $obj->lossScore, $obj->team, $emulate = TRUE, $id = $obj->matchID);
         }
     }
     
