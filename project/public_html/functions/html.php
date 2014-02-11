@@ -3,6 +3,7 @@
 include_once("classes/DB.php");
 date_default_timezone_set("Europe/Copenhagen");
 session_start();
+//global $DB;
 function printHeader($title, $heading){
     echo "<!DOCTYPE html>
         <html>
@@ -115,5 +116,36 @@ function printSiteStats(){
             $and = FALSE;
         }
         echo"</li></ul>";
+}
+
+function printSelectPlayerForm(){
+    global $DB;
+    $result = $DB->query("SELECT playerID, name FROM players ORDER BY name");   
+
+    $playerArray[0]['name'] = "Choose Player...";
+    $playerArray[0]['playerID'] = -1;
+    
+    while ($row = mysql_fetch_array($result, MYSQL_BOTH)) {
+        $playerArray[] = $row;
+    }
+    
+    echo "<form action=\"{$_SERVER['PHP_SELF']}\" method=\"GET\">
+
+    <div align=\"center\">";
+
+    echo "<select name=\"id\">";
+    foreach($playerArray as $player){
+        echo"<option value=\"{$player['playerID']}\">{$player['name']}</option>";
+    }
+    echo"</select>
+        <br/><br/>
+        <input type=\"submit\" value=\"Submit!\"/>
+    
+    </div>
+    </form>";
+}
+
+function printFilterPlayerForm(){
+    
 }
 ?>

@@ -1,3 +1,4 @@
+
 <?php
 
 include_once "classes/DB.php";
@@ -27,11 +28,14 @@ class Admin{
     
 
     public function recalculate(){
+
         $this->resetAllPlayers();
+
         $this->createMatches();
+
     }
 
-    public function initTrophies(){
+ public function initTrophies(){
         global $DB;
 
         $query1 = $DB->query("
@@ -55,10 +59,6 @@ class Admin{
               );
 
             ");
-
-
-
-
     }
 
 
@@ -168,7 +168,6 @@ class Admin{
             DELIMITER ;"
         );
     }
-
     
 
     function resetAllPlayers(){
@@ -199,7 +198,7 @@ class Admin{
 
         
 
-        $result = $DB->query("SELECT winnerID, loserID, winScore, lossScore, team
+        $result = $DB->query("SELECT matchID, winnerID, loserID, winScore, lossScore, team
 
                               FROM matches
 
@@ -209,7 +208,7 @@ class Admin{
 
         while($obj = mysql_fetch_object($result)){
 
-            $match->createMatch($obj->winnerID, $obj->loserID, $obj->winScore, $obj->lossScore, $obj->team, $emulate = TRUE);
+            $match->createMatch($obj->winnerID, $obj->loserID, $obj->winScore, $obj->lossScore, $obj->team, $emulate = TRUE, $id = $obj->matchID);
 
         }
 
@@ -222,5 +221,4 @@ class Admin{
 
 
 $admin = new Admin();
-
 ?>

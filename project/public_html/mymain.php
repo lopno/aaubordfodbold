@@ -7,6 +7,9 @@ function __autoload($class_name) {
 }
 ?>
 <div class="leftside">
+<h3>Update January 9th 2014</h3>
+<li>How many points won in a match is now shown</li>
+    
 <h3>Update October 1st 2013</h3>
 <li>Link to player profiles added to match history</li>
     
