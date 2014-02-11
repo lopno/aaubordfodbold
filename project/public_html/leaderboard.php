@@ -72,7 +72,7 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
                 }
             echo"{$row['ranking']}</td>";
             if($rank == 1){
-                echo"<td><img src=\"http://i.imgur.com/SpR4U.gif\" alt=\"LIKE A BOSS!\" title=\"LIKE A BOSS!\"/></td>";
+                echo"<td><img src=\"".PATH_ROOT."img/boss.gif\" alt=\"LIKE A BOSS!\" title=\"LIKE A BOSS!\"/></td>";
             }
             echo"</tr>";
         }
