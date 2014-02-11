@@ -1,4 +1,4 @@
 *.sublime-project
 *.sublime-workspace
-project/config.php
-.htaccess
+project/public_html/config.php
+project/public_html/.htaccess
