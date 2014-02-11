@@ -3,13 +3,11 @@ include_once "classes/DB.php";
 include_once "classes/match.php";
 
 class Admin{
-
-    public function __construct()
-    {
+    public function __construct(){
     }
 
-    public function _destruct()
-    {
+    public function _destruct(){
+
     }
 
     public function recalculate(){
@@ -36,10 +34,11 @@ class Admin{
 
             CREATE TABLE trophies (
             trophyID INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(256),
-            imagepath varchar(256),
-            holderquery VARCHAR(256),
-            extraquery VARCHAR(256));
+            name VARCHAR(256) NOT NULL,
+            imagePath varchar(256) NOT NULL,
+            holderQuery VARCHAR(256) NOT NULL,
+            extraQuery VARCHAR(256) DEFAULT NULL,
+            team BOOLEAN NOT NULL);
 
 
             DROP TABLE IF EXISTS trophyholders;
