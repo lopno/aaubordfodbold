@@ -18,4 +18,3 @@ class Profile{
 }
 
 $profile = new Profile(); 
-?>
