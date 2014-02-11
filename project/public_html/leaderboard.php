@@ -26,21 +26,27 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
         </tr>";
     
     $rank = 0;
-    while ($row = mysql_fetch_assoc($result)) {
-        
-        if(($row['wins']+$row['losses']) > 0){
-            
-            if($odd){
+    while ($row = mysql_fetch_assoc($result))
+    {    
+        if(($row['wins']+$row['losses']) > 0)
+        {    
+            if($odd)
+            {
                 $odd = FALSE;
-            }else{
+            }
+            else
+            {
                 $odd = TRUE;
             }
             
             $rank++;
             echo"<tr>";
-                if($odd){
+                if($odd)
+                {
                     echo "<td id=\"odd\">";
-                } else{
+                }
+                else
+                {
                     echo "<td>";
                 }
             echo"$rank</td>";
