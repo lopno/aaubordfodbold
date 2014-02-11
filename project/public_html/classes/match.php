@@ -295,13 +295,31 @@ class Match{
         $cleanId = (int) $DB->escape($id);
         
         $odd = FALSE;
-        if($id < 0){            
-            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points FROM matches ORDER BY timeCreated DESC LIMIT $start,$count");
+        if($id < 0)
+        {            
+            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points 
+                                        FROM matches 
+                                        ORDER BY timeCreated DESC 
+                                        LIMIT $start,$count");
         }else{
-            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points FROM matches ORDER BY timeCreated DESC LIMIT $start,$count");
+            $matchResult = $DB->query("SELECT timeCreated, winnerID, loserID, winScore, lossScore, team, points 
+                                        FROM matches 
+                                        WHERE NOT team and (winnerID = $id or loserID = $id) or team and (winnerID IN (
+                                            SELECT teams.teamID
+                                            FROM teams
+                                                JOIN memberof ON teams.teamID = memberof.teamID
+                                            WHERE memberof.playerID = $id
+                                            ) or loserID IN (
+                                            SELECT teams.teamID
+                                            FROM teams
+                                                JOIN memberof ON teams.teamID = memberof.teamID
+                                            WHERE memberof.playerID = $id
+                                            ))
+                                        ORDER BY timeCreated DESC 
+                                        LIMIT $start,$count");
         }
         
-        echo"<br/>
+        echo"
             <div align=\"center\">
                 <table>
                     <tr>
