@@ -6,4 +6,6 @@ define('DB_NAME','aaubordfodbold');
 define('DB_USER','root');
 define('DB_PASS','derpderpderp');
 
-define('PW_HASH','fUckd!1g@lG_^**^~d@r');" > config.php
+define('PW_HASH','fUckd!1g@lG_^**^~d@r');
+define('PATH_ROOT','../');
+" > config.php
