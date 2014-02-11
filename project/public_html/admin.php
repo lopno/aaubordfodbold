@@ -104,7 +104,6 @@ if(($_POST['user'] && $_POST['pass'] && login($_POST['user'], $_POST['pass'])) |
     <a href="?run=first">Recalculate</a>
     <br>
     <a href="?run=0">Refresh Page</a>';
-
 }
 
 
