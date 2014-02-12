@@ -4,6 +4,7 @@ include_once "functions/html.php";
 include_once "classes/DB.php";
 include_once "classes/match.php";
 include_once "classes/profile.php";
+include_once "models/trophies.php";
 
 if(!isset($_GET['id'])){
    
@@ -324,11 +325,12 @@ else
 
     }
 
-    
 
     printHeader("AAU Bordfodbold - " . $player->name . "'s Profile", $player->name . "'s Profile Page");
 
-    
+      $trophies = new Trophies;
+      //show trophies if he owns any
+
 
     echo "
     <div align=\"center\">
@@ -394,5 +396,8 @@ else
       
       echo '</div>';
       
+
+
+
       printFooter();
 }
