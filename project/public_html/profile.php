@@ -6,19 +6,15 @@ include_once "classes/match.php";
 include_once "classes/profile.php";
 include_once "models/trophies.php";
 
+
 if(!isset($_GET['id'])){
    
     printHeader("AAU Bordfodbold - Player Profile", "Select Player Profile");
     //global $DB;
     $result = $DB->query("SELECT playerID, name FROM players ORDER BY name");   
 
-
-
     $playerArray[0]['name'] = "Choose Player...";
-
     $playerArray[0]['playerID'] = -1;
-
-    
 
     while ($row = mysql_fetch_array($result, MYSQL_BOTH)) {
 
@@ -283,46 +279,25 @@ else
 
         }
 
-
-
         $bestTeamMateName = $bestTeamMate->name;
-
         $bestTeamWins = $bestTeamObject->wins;
-
         $bestTeamLosses = $bestTeamObject->losses;
-
         $bestTeamRating = $bestTeamObject->ranking;
-
-
-
-    } else{ //no team games played
-
-        
-
+    }
+    else
+    { //no team games played
         $teamWins = 0;
-
         $teamLosses = 0;
-
         $bestTeamRatio = 0;
-
         $bestTeamStreak = 0;
-
         $teamRank = '-';
-
         $bestTeamMateName = '-';
-
         $bestTeamWins = 0;
-
         $bestTeamLosses = 0;
-
         $bestTeamRatio = 0;
-
         $bestTeamRating = 0;
-
         $bestTeamStreak = 0;
-
         $teamRank = '-';
-
     }
 
 

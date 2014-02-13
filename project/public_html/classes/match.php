@@ -2,7 +2,7 @@
 include_once "classes/DB.php";
 
 class Match{
-	
+    
     public function __construct(){
         
     }
@@ -36,6 +36,7 @@ class Match{
     public function createTeam($id1, $id2){
         
         global $DB;
+        $odd = FALSE;
         
         $result = $DB->query("INSERT INTO teams (ranking, wins, losses) VALUES (1500, 0, 0)");
         
@@ -193,6 +194,7 @@ class Match{
     
     public function printCreateMatchForm(){
         global $DB;
+        $odd = FALSE;
         
         $result = $DB->query("SELECT playerID, name FROM players ORDER BY name");   
 
