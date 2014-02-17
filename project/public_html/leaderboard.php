@@ -74,7 +74,6 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
                     echo "<td>";
                 }
             echo"{$row['ranking']}</td>";
-
             if($rank == 1){
                 echo"<td><img src=\"".PATH_ROOT."img/boss.gif\" alt=\"LIKE A BOSS!\" title=\"LIKE A BOSS!\"/></td>";
             }
