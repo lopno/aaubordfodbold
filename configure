@@ -1,0 +1,27 @@
+#!/bin/bash
+serveraddr=
+user=
+pass=
+if [ $# -gt 0 ]
+  then
+    user=$1
+    pass=
+else
+    echo "Please provide mysql username as follows: 'configure <username>'"
+    exit
+fi
+if [ $# -gt 1 ]
+  then
+    pass=$2
+fi
+if [ $# -gt 2 ]
+  then
+    serveraddr=$3
+fi
+
+
+cd project/public_html
+./make_config.sh
+
+cd ../..
+php configure.php $user $pass $serveraddr

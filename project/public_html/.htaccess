@@ -1,3 +1,0 @@
-# Do not remove this line, otherwise mod_rewrite rules will stop working
-RewriteBase /
-redirect 301 /index.html http://aaubordfodbold.dk/mymain.php
