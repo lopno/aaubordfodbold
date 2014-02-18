@@ -3,19 +3,34 @@ include_once "classes/trophy.php";
 
 class Trophies{
     public $soloTrophies = array();
+    public $teamTrophies = array();
 
     public function __construct(){   
 
         global $DB;
 
-            $trophies = $DB->query("SELECT name, imagePath, holderQuery, extraQuery FROM trophies WHERE team = 0");
-    
-            while ($trophy = mysql_fetch_assoc($trophies))
-            {
-                $this->soloTrophies[] = new Trophy($trophy['name'],$trophy['imagePath'],$trophy['holderQuery'],$trophy['extraQuery']);
+        $trophies = $DB->query("SELECT name, imagePath, holderQuery, team, extraQuery FROM trophies WHERE team = 0");
 
-            }        
+        while ($trophy = mysql_fetch_assoc($trophies))
+        {
+            $trophyInstance = new Trophy($trophy['name'],$trophy['imagePath'],$trophy['holderQuery'],$trophy['team'],$trophy['extraQuery']);
+            $this->sortAddTrophies($trophyInstance);
+        }   
+    }     
 
+    public function __destruct(){}
+
+    private function sortAddTrophies($trophy)
+    {
+        
+        # If solo match
+        if (!$trophy->getTeam()) {
+            $this->soloTrophies[$trophy->getOwner()][] = $trophy;
+        }
+        else {
+            $this->teamTrophies[$trophy->getOwner()][] = $trophy;
+        }
+    }
         /*
 
         INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, team)
@@ -43,10 +58,9 @@ class Trophies{
         
         //Scored goal / goal kill loose 
         //Win lose ratio*/
-    }
     
-    public function __destruct(){   
-    }
+    
+    
 
     
     

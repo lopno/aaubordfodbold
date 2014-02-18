@@ -54,6 +54,8 @@ class Match{
     
         global $DB;
         
+        $this->updateTrophies();
+
         if($isTeam == true){
             $ratingQuery1 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team1."'";
             $ratingQuery2 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team2."'";
@@ -188,6 +190,8 @@ class Match{
         
         $result = $DB->query($query);
         $matchID = mysql_insert_id();
+
+        
         
         return $matchID;
     }
@@ -463,7 +467,46 @@ class Match{
 
         echo"</table></div>";
     }
+
+    private function updateTrophies(){
+        global $DB;
+        #solo trophies
+        $trophies = $DB->query("SELECT trophyID, holderQuery FROM trophies WHERE team = 0");
+        $updateQuery = "INSERT INTO trophyHolders (trophyID, playerID) INSERT INTO ";
+
+        while ($trophy = mysql_fetch_assoc($trophies))
+            {
+                $playerID = $this->getOwner($trophy[holderQuery]);
+                $insertInto .= "($trophy[trophyID],$playerID),";
+            }  
+        $updateQuery .= rtrim($insertInto, ",") . ";";
+        $DB->query($updateQuery); 
+
+        var_dump($updateQuery);
+
+        exit;
+
+    }
+
+    private function getOwner($query){
+       
+        global $DB;
+        $result = mysql_query($query);
+        if (!$result) 
+        {
+            return NULL;
+        }
+        else
+        {
+            $row = mysql_fetch_row($result);
+            return $ownedID = $row[0]; 
+        }          
+        
+    }
+
 }
+
+
     
 $match = new Match();
 ?>
