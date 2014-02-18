@@ -6,6 +6,7 @@ if(is_array($argv))
 {
     $user=$argv[1];
     $pass=$argv[2];
+    if(count($argv) > 3)
     $addr=$argv[3];
 }
 else
