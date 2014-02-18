@@ -105,6 +105,9 @@ if(($_POST['user'] && $_POST['pass'] && login($_POST['user'], $_POST['pass'])) |
     <br>
     <a href="?run=0">Refresh Page</a>';
 }
+
+
+
 //Not logged in
 else
 {

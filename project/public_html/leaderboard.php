@@ -1,17 +1,20 @@
 <?php
 include_once "functions/html.php";
 include_once "classes/DB.php";
+include_once "models/trophies.php";
+
 
 if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
     
     printHeader("AAU Bordfodbold - Solo Leaderboard", "Solo Leaderboard");
-    
     printLeaderboardLinks();
     
     $result = $DB->query("SELECT playerID, name, wins, losses, ranking FROM players ORDER BY ranking DESC");
-    
     $odd = FALSE;
     
+    $soloTrophies = new Trophies;
+
+  
     echo"<div align=\"center\">
         <table>
         <tr>
@@ -71,6 +74,7 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
                     echo "<td>";
                 }
             echo"{$row['ranking']}</td>";
+
             if($rank == 1){
                 echo"<td><img src=\"".PATH_ROOT."img/boss.gif\" alt=\"LIKE A BOSS!\" title=\"LIKE A BOSS!\"/></td>";
             }
