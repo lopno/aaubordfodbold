@@ -8,27 +8,17 @@ class Admin{
     {
     }
 
-    public function _destruct()
+    public function __destruct()
     {
     }
 
     public function recalculate(){
         $this->resetAllPlayers();
         $this->createMatches();
+
     }
 
-    function resetAllPlayers()
-    {
-        global $DB;
-
-        $DB->query("UPDATE players 
-                    SET wins = '0', losses = '0', ranking = '1500'");
-
-        $DB->query("UPDATE teams 
-                    SET wins = '0', losses = '0', ranking = '1500'");
-    }
-
-     public function initTrophies(){
+    public function initTrophies(){
         global $DB;
 
         $query1 = $DB->query("
@@ -36,10 +26,11 @@ class Admin{
 
             CREATE TABLE trophies (
             trophyID INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(256),
-            imagepath varchar(256),
-            holderquery VARCHAR(256),
-            extraquery VARCHAR(256));
+            name VARCHAR(256) NOT NULL,
+            imagePath varchar(256) NOT NULL,
+            holderQuery VARCHAR(256) NOT NULL,
+            extraQuery VARCHAR(256) DEFAULT NULL,
+            team BOOLEAN NOT NULL);
 
 
             DROP TABLE IF EXISTS trophyholders;
@@ -51,6 +42,8 @@ class Admin{
               PRIMARY KEY(trophyID, playerID)
               );
             ");
+
+
     }
 
 
@@ -160,6 +153,18 @@ class Admin{
             DELIMITER ;"
         );
     }
+
+    function resetAllPlayers()
+    {
+        global $DB;
+
+        $DB->query("UPDATE players 
+                    SET wins = '0', losses = '0', ranking = '1500'");
+
+        $DB->query("UPDATE teams 
+                    SET wins = '0', losses = '0', ranking = '1500'");
+    }
+
 
     function createMatches()
     {
