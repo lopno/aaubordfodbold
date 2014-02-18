@@ -8,17 +8,16 @@ class Trophy{
 	private $name;
     private $description;
     private $image;
-    private $query;
     private $ownerID;
     private $extraDescription;
     private $team;
 
 
-    public function __construct($name,$image,$query,$team,$extra = null){    
+    public function __construct($name,$image,$ownerID,$team,$extra = null){    
         $this->name = $name;
         $this->description = $name;
         $this->image = $image;
-        $this->query = $query;
+        $this->ownerID = $ownerID;
         $this->team = $team;
         $this->extraDescription = $extra;
     }
@@ -48,21 +47,8 @@ class Trophy{
         
     }
     
-    public function getOwner(){
-        if(!isset($this->ownerID)){
-            global $DB;
-            $result = mysql_query($this->query);
-            if (!$result) 
-            {
-                return NULL;
-            }
-            else
-            {
-                $row = mysql_fetch_row($result);
-                $this->ownedID = $row[0]; 
-            }          
-        }       
-        return $this->ownedID;
+    public function getOwner(){    
+        return $this->ownerID;
     }
 }
  

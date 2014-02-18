@@ -470,19 +470,46 @@ class Match{
 
     private function updateTrophies(){
         global $DB;
-        #solo trophies
-        $trophies = $DB->query("SELECT trophyID, holderQuery FROM trophies WHERE team = 0");
-        $updateQuery = "INSERT INTO trophyHolders (trophyID, playerID) INSERT INTO ";
 
-        while ($trophy = mysql_fetch_assoc($trophies))
+        #only solo trophies
+        $newTrophies = $DB->query("SELECT trophyID, holderQuery FROM trophies WHERE team = 0");
+
+        $insertIntoQuery = "INSERT INTO trophyholders (trophyID, playerID) VALUES ";
+        $insertInto = "";
+
+        while ($trophy = mysql_fetch_assoc($newTrophies)) #foreach trophy
             {
-                $playerID = $this->getOwner($trophy[holderQuery]);
-                $insertInto .= "($trophy[trophyID],$playerID),";
-            }  
-        $updateQuery .= rtrim($insertInto, ",") . ";";
-        $DB->query($updateQuery); 
+                $playerID = $this->getOwner($trophy['holderQuery']);     
+                $existingTrophyRecordQuery = $DB->query("   SELECT trophyID, playerID, fromDate 
+                                                            FROM trophyholders 
+                                                            WHERE trophyID = $trophy[trophyID] 
+                                                            ORDER BY fromDate DESC 
+                                                            LIMIT 1");
 
-        var_dump($updateQuery);
+                $existingTrophyRecord = mysql_fetch_assoc($existingTrophyRecordQuery);
+
+                if($playerID == $existingTrophyRecord['playerID']){ #no trophy ownerchange
+
+                }
+                elseif(!isset($existingTrophyRecord)){ #if trophy is new
+                    if (isset($playerID)) {
+                        $insertInto .= "($trophy[trophyID],$playerID),";
+                    }
+                }
+                elseif($playerID != $existingTrophyRecord['playerID']){ #trophy ownership change
+
+                    $insertInto .= "($trophy[trophyID],$playerID),";
+                    $updateQuery = "    UPDATE trophyholders 
+                                        SET toDate = NOW() 
+                                        WHERE trophyID = $trophy[trophyID] 
+                                        && playerID = $playerID 
+                                        && fromDate = $trophy[fromDate]";
+                    $DB->query($updateQuery);
+                }
+            }  
+        $insertIntoQuery .= rtrim($insertInto, ",") . ";";
+        $DB->query($insertIntoQuery); 
+
 
         exit;
 

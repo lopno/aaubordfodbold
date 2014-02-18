@@ -32,14 +32,12 @@ class Admin{
             extraQuery VARCHAR(256) DEFAULT NULL,
             team BOOLEAN NOT NULL);
 
-
-            DROP TABLE IF EXISTS trophyholders;
-            CREATE TABLE trophyholders(
+            CREATE TABLE IF NOT EXISTS trophyholders(
               trophyID INT,
               playerID INT,
-              fromDate TIMESTAMP,
-              toDate TIMESTAMP,
-              PRIMARY KEY(trophyID, playerID)
+              `fromDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              `toDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+              PRIMARY KEY(trophyID, playerID,fromDate)
               );
             ");
 

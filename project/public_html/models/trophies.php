@@ -8,12 +8,15 @@ class Trophies{
     public function __construct(){   
 
         global $DB;
-
-        $trophies = $DB->query("SELECT name, imagePath, holderQuery, team, extraQuery FROM trophies WHERE team = 0");
-
+        #where clause is set only to get solu queries because the underlying system do not support team trophies.
+        $trophies =  $DB->query("   SELECT t.trophyID as trophyID, playerID, name, imagePath, team, extraQuery 
+                                    FROM (SELECT trophyID, playerID FROM trophyholders ORDER BY fromDate DESC LIMIT 1) as th
+                                    INNER JOIN trophies as t
+                                    ON t.trophyID = th.trophyID
+                                    WHERE team = 0;");
         while ($trophy = mysql_fetch_assoc($trophies))
         {
-            $trophyInstance = new Trophy($trophy['name'],$trophy['imagePath'],$trophy['holderQuery'],$trophy['team'],$trophy['extraQuery']);
+            $trophyInstance = new Trophy($trophy['name'],$trophy['imagePath'],$trophy['playerID'],$trophy['team'],$trophy['extraQuery']);
             $this->sortAddTrophies($trophyInstance);
         }   
     }     
