@@ -6,7 +6,6 @@ include_once "models/trophies.php";
 
 $trophies = new Trophies;
 
-
 if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
     
     printHeader("AAU Bordfodbold - Solo Leaderboard", "Solo Leaderboard");

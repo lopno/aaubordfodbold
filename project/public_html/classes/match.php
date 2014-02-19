@@ -54,7 +54,7 @@ class Match{
     
         global $DB;
         
-        $this->updateTrophies();
+        
 
         if($isTeam == true){
             $ratingQuery1 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team1."'";
@@ -191,7 +191,8 @@ class Match{
         $result = $DB->query($query);
         $matchID = mysql_insert_id();
 
-        
+        //recalculate the trophies
+        $this->updateTrophies();
         
         return $matchID;
     }
@@ -488,10 +489,7 @@ class Match{
 
                 $existingTrophyRecord = mysql_fetch_assoc($existingTrophyRecordQuery);
 
-                if($holderID == $existingTrophyRecord['holderID']){ #no trophy ownerchange
-
-                }
-                elseif(!isset($existingTrophyRecord)){ #if trophy is new
+                if(!isset($existingTrophyRecord)){ #if trophy is new
                     if (isset($holderID)) {
                         $insertInto .= "($trophy[trophyID],$holderID),";
                     }
@@ -500,10 +498,11 @@ class Match{
 
                     $insertInto .= "($trophy[trophyID],$holderID),";
                     $updateQuery = "    UPDATE trophyholders 
-                                        SET toDate = NOW() 
+                                        SET toDate = NOW() - INTERVAL 1 SECOND 
                                         WHERE trophyID = $trophy[trophyID] 
-                                        && holderID = $holderID 
-                                        && fromDate = $existingTrophyRecord[fromDate]";
+                                        && holderID = $existingTrophyRecord[holderID] 
+                                        && fromDate = '$existingTrophyRecord[fromDate]'";
+
                     $DB->query($updateQuery);
                 }
             }  

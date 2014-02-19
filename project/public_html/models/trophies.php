@@ -10,7 +10,7 @@ class Trophies{
         global $DB;
         #where clause is set only to get solu queries because the underlying system do not support team trophies.
         $trophies =  $DB->query("   SELECT t.trophyID as trophyID, holderID, name, imagePath, team, extraQuery 
-                                    FROM (SELECT trophyID, holderID FROM trophyholders ORDER BY fromDate DESC LIMIT 1) as th
+                                    FROM (SELECT trophyID, holderID FROM trophyholders WHERE toDate = '0000-00-00 00:00:00') as th
                                     INNER JOIN trophies as t
                                     ON t.trophyID = th.trophyID
                                     WHERE team = 0;");
@@ -36,11 +36,13 @@ class Trophies{
     }
         /*
 
+        Most matches played.
+
         INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, team)
         VALUES ("LIKE A BOSS!", "http://i.imgur.com/SpR4U.gif", "SELECT playerID FROM players ORDER BY ranking DESC LIMIT 1" , NULL, 0);
         
         INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, team)
-        VALUES ("Latest win", "http://i.imgur.com/SpR4U.gif", "SELECT winnerID FROM matches ORDER BY created DESC LIMIT 1" , NULL, 0);
+        VALUES ("Latest win", "http://i.imgur.com/SpR4U.gif", "SELECT winnerID FROM matches WHERE team = 0 ORDER BY timeCreated DESC LIMIT 1" , NULL, 0);
 
         $firstPlace = new Trophy(
             "LIKE A BOSS!",
