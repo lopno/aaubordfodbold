@@ -34,10 +34,11 @@ class Admin{
 
             CREATE TABLE IF NOT EXISTS trophyholders(
               trophyID INT,
-              playerID INT,
+              holderID INT,
+              team BOOLEAN DEFAULT 0,
               `fromDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
               `toDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-              PRIMARY KEY(trophyID, playerID,fromDate)
+              PRIMARY KEY(trophyID, holderID,fromDate)
               );
             ");
 
