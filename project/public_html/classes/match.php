@@ -473,30 +473,30 @@ class Match{
         global $DB;
 
         #only solo trophies
-        $newTrophies = $DB->query("SELECT trophyID, holderQuery FROM trophies WHERE team = 0");
+        $trophies = $DB->query("SELECT trophyID, holderQuery FROM trophies WHERE team = 0");
 
         $insertIntoQuery = "INSERT INTO trophyholders (trophyID, holderID) VALUES ";
-        $insertInto = "";
+        $values = "";
 
-        while ($trophy = mysql_fetch_assoc($newTrophies)) #foreach trophy
+        while ($trophy = mysql_fetch_assoc($trophies)) #foreach trophy
             {
                 $holderID = $this->getOwner($trophy['holderQuery']);     
-                $existingTrophyRecordQuery = $DB->query("   SELECT trophyID, holderID, fromDate 
-                                                            FROM trophyholders 
-                                                            WHERE trophyID = $trophy[trophyID] 
-                                                            ORDER BY fromDate DESC 
-                                                            LIMIT 1");
+                $trophyholders = $DB->query("   SELECT trophyID, holderID, fromDate 
+                                                FROM trophyholders 
+                                                WHERE trophyID = $trophy[trophyID] && toDate = '0000-00-00 00:00:00'
+                                                ORDER BY fromDate DESC 
+                                                LIMIT 1");
 
-                $existingTrophyRecord = mysql_fetch_assoc($existingTrophyRecordQuery);
+                $existingTrophyRecord = mysql_fetch_assoc($trophyholders);
 
                 if(!isset($existingTrophyRecord)){ #if trophy is new
                     if (isset($holderID)) {
-                        $insertInto .= "($trophy[trophyID],$holderID),";
+                        $values .= "($trophy[trophyID],$holderID),";
                     }
                 }
                 elseif($holderID != $existingTrophyRecord['holderID']){ #trophy ownership change
 
-                    $insertInto .= "($trophy[trophyID],$holderID),";
+                    $values .= "($trophy[trophyID],$holderID),";
                     $updateQuery = "    UPDATE trophyholders 
                                         SET toDate = NOW() - INTERVAL 1 SECOND 
                                         WHERE trophyID = $trophy[trophyID] 
@@ -506,11 +506,11 @@ class Match{
                     $DB->query($updateQuery);
                 }
             }  
-        $insertIntoQuery .= rtrim($insertInto, ",") . ";";
+        $insertIntoQuery .= rtrim($values, ",") . ";";
         $DB->query($insertIntoQuery); 
 
 
-
+        exit;
     }
 
     private function getOwner($query){
