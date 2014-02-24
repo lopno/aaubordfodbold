@@ -52,12 +52,12 @@ else{
 			printPopUp("The loser can't have a greater score than the winner.", TRUE);
 			echo "The loser can't have a greater score than the winner.";
 		} 
-		elseif(is_null((new PlayerModel($id1))->getName()))
+		elseif(!(new PlayerModel($id1))->exists())
 		{
 			printPopUp("ID of winning player is invalid", TRUE);
 			echo "ID of winning player is invalid";
 		}
-		elseif(is_null((new PlayerModel($id2))->getName()))
+		elseif(!(new PlayerModel($id2))->exists())
 		{
 			printPopUp("ID of losing player is invalid", TRUE);
 			echo "ID of losing player is invalid";
@@ -121,12 +121,12 @@ else{
 			printPopUp("The losing team can't have a greater score than the winning team.", TRUE);
 			echo "The losing team can't have a greater score than the winning team.";
 		}
-		elseif(is_null((new PlayerModel($winIDs[0]))->getName()) || is_null((new PlayerModel($winIDs[1]))->getName()))
+		elseif(!(new PlayerModel($winIDs[0]))->exists() || !(new PlayerModel($winIDs[1]))->exists())
 		{
 			printPopUp("ID of a winning player is invalid", TRUE);
 			echo "ID of a winning player is invalid";
 		}
-		elseif(is_null((new PlayerModel($lossIDs[0]))->getName()) || is_null((new PlayerModel($lossIDs[1]))->getName()))
+		elseif(!(new PlayerModel($lossIDs[0]))->exists() || !(new PlayerModel($lossIDs[1]))->exists())
 		{
 			printPopUp("ID of a losing player is invalid", TRUE);
 			echo "ID of a losing player is invalid";

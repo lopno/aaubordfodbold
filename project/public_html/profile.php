@@ -5,9 +5,27 @@ include_once "classes/DB.php";
 include_once "classes/match.php";
 include_once "classes/profile.php";
 include_once "models/trophies.php";
+include_once "models/player_model.php";
 
-if(!isset($_GET['id'])){
-   
+$blank = true;
+
+if(isset($_GET['id']))
+{
+    $player = new PlayerModel($_GET['id']);
+    if(! $player->exists())
+    {
+        printPopUp("Invalid player ID", TRUE);
+        echo "Invalid player ID";
+    }
+    else
+    {
+        $blank = false;
+    }
+}
+
+
+if($blank)
+{
     printHeader("AAU Bordfodbold - Player Profile", "Select Player Profile");
     //global $DB;
     $result = $DB->query("SELECT playerID, name FROM players ORDER BY name");   
@@ -54,17 +72,7 @@ if(!isset($_GET['id'])){
 }
 else
 {
-    $id = (int)$_GET['id'];
-
-    $playerResult = $DB->query("SELECT * FROM players WHERE playerID =" . $id);
-
-    $player = mysql_fetch_object($playerResult);
-    if(is_null($player->name))
-    {
-      echo 'Illegal id ' . $id;
-      exit;
-    }
-    
+    $id = (int)$_GET['id'];    
 
     $teamsResult = $DB->query("SELECT sum(wins), sum(losses) FROM teams JOIN memberof ON teams.teamID = memberof.teamID WHERE memberof.playerID = " . $id . " GROUP BY memberof.playerID");
 
@@ -86,9 +94,9 @@ else
 
     
 
-    $totalWins = ($teamWins + $player->wins);
+    $totalWins = ($teamWins + $player->getWins());
 
-    $totalLosses = ($teamLosses + $player->losses);
+    $totalLosses = ($teamLosses + $player->getLosses());
 
     
 
@@ -118,7 +126,7 @@ else
 
     if(($totalWins + $totalLosses) > 0){
 
-        $totalRating = (($player->ranking * ($player->wins + $player->losses)) + $teamRatingTemp) / ($totalWins + $totalLosses);
+        $totalRating = (($player->getRating() * ($player->getWins() + $player->getLosses())) + $teamRatingTemp) / ($totalWins + $totalLosses);
 
     }
 
@@ -140,9 +148,9 @@ else
 
     $soloRatio = 0;
 
-    if($player->wins > 0){
+    if($player->getWins() > 0){
 
-        $soloRatio = ($player->wins / ($player->wins + $player->losses));
+        $soloRatio = ($player->getWins() / ($player->getWins() + $player->getLosses()));
 
     }
 
@@ -300,7 +308,7 @@ else
     }
 
 
-    printHeader("AAU Bordfodbold - " . $player->name . "'s Profile", $player->name . "'s Profile Page");
+    printHeader("AAU Bordfodbold - " . $player->getName() . "'s Profile", $player->getName() . "'s Profile Page");
 
       $trophies = new Trophies;
       //show trophies if he owns any
@@ -327,10 +335,10 @@ else
           <th>Wins</th><th>Losses</th><th>Ratio</th><th>Rating</th><th>Win Streak</th><th>Rank</th>
           </tr>
           <tr>
-          <td id=\"odd\"> $player->wins </td>
-          <td id=\"odd\"> $player->losses </td>
+          <td id=\"odd\"> ".$player->getWins()." </td>
+          <td id=\"odd\"> ".$player->getLosses()." </td>
           <td id=\"odd\"> " . $profile->format($soloRatio) . "</td>
-          <td id=\"odd\"> $player->ranking </td>
+          <td id=\"odd\"> ".$player->getRating()." </td>
           <td id=\"odd\"> $soloStreak </td>
           <td id=\"odd\"> $soloRank </td>
           </tr>
