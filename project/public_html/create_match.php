@@ -2,6 +2,7 @@
 include_once "functions/html.php";
 include_once "classes/DB.php";
 include_once "classes/match.php";
+include_once "models/player_model.php";
 
 printHeader("AAU Bordfodbold - New Match", "Set New Match Result");
 
@@ -41,13 +42,28 @@ else{
         $id1 = $winner1v1;
 		$id2 = $loser1v1;
 		//echo "Win: " . $id1 . "loss: " . $id2;
-		if($id1 == $id2){
+		if($id1 == $id2)
+		{
             printPopUp("Players can't play against themselves.", TRUE);
 			echo "Players can't play against themselves.";
-		}elseif($winScore < $lossScore){
+		}
+		elseif($winScore <= $lossScore)
+		{
 			printPopUp("The loser can't have a greater score than the winner.", TRUE);
 			echo "The loser can't have a greater score than the winner.";
-		} else{
+		} 
+		elseif(is_null((new PlayerModel($id1))->getName()))
+		{
+			printPopUp("ID of winning player is invalid", TRUE);
+			echo "ID of winning player is invalid";
+		}
+		elseif(is_null((new PlayerModel($id2))->getName()))
+		{
+			printPopUp("ID of losing player is invalid", TRUE);
+			echo "ID of losing player is invalid";
+		}
+		else
+		{
 			$match->createMatch($id1, $id2, $winScore, $lossScore, false);
 			printPopUp("Succesfully created match!", FALSE);
 			echo "Succesfully created match: " . $winner1v1 . " " . $winScore . " - " . $lossScore . " " . $loser1v1 . "<br />";
@@ -93,7 +109,7 @@ else{
 		}
 		
 		$error2 = false;
-		if($lossScore > $winScore){
+		if($lossScore >= $winScore){
 			$error2 = true;
 		}
 		
@@ -104,7 +120,18 @@ else{
 		} elseif($error2 == true){
 			printPopUp("The losing team can't have a greater score than the winning team.", TRUE);
 			echo "The losing team can't have a greater score than the winning team.";
-		} else{
+		}
+		elseif(is_null((new PlayerModel($winIDs[0]))->getName()) || is_null((new PlayerModel($winIDs[1]))->getName()))
+		{
+			printPopUp("ID of a winning player is invalid", TRUE);
+			echo "ID of a winning player is invalid";
+		}
+		elseif(is_null((new PlayerModel($lossIDs[0]))->getName()) || is_null((new PlayerModel($lossIDs[1]))->getName()))
+		{
+			printPopUp("ID of a losing player is invalid", TRUE);
+			echo "ID of a losing player is invalid";
+		}
+		else{
 			$match->createMatch($winTeam, $lossTeam, $winScore, $lossScore, true);
             printPopUp("Succesfully created match!", FALSE);
 			echo "Succesfully created match!";
@@ -117,4 +144,3 @@ echo "<h3>Recently Played Matches</h3>";
 $match->printRecentlyPlayedMatches(0,5);
 
 printFooter();
-?>

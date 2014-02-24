@@ -56,4 +56,3 @@ class Player
 		return $this->losses;
 	}
 }
-?>
