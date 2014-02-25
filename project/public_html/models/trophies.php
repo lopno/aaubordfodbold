@@ -8,15 +8,12 @@ class Trophies{
     public function __construct(){   
 
         global $DB;
-        #where clause is set only to get solu queries because the underlying system do not support team trophies.
         $trophies =  $DB->query("   SELECT t.trophyID as trophyID, holderID, name, imagePath, team, extraQuery 
-                                    FROM (SELECT trophyID, holderID FROM trophyholders WHERE toDate = '0000-00-00 00:00:00') as th
+                                    FROM (SELECT trophyID, holderID, team FROM trophyholders WHERE toDate = '0000-00-00 00:00:00') as th
                                     INNER JOIN trophies as t
-                                    ON t.trophyID = th.trophyID
-                                    WHERE team = 0;");
-
-        
-        if(isset($trophies))
+                                    ON t.trophyID = th.trophyID;");
+     
+        if($trophies) //if query returns a result
         {
             $numberOfResults = mysql_num_rows($trophies);
             for ($i=0; $i < $numberOfResults; $i++) 
@@ -24,11 +21,10 @@ class Trophies{
                 $trophy = mysql_fetch_assoc($trophies);
                 $trophyInstance = new Trophy($trophy['name'],$trophy['imagePath'],$trophy['holderID'],$trophy['team'],$trophy['extraQuery']);
                 $this->sortAddTrophies($trophyInstance);
+             
             }
         }
-        
-        
-           
+      
     }     
 
     public function __destruct(){}
@@ -37,7 +33,7 @@ class Trophies{
     {
         
         # If solo match
-        if (!$trophy->getTeam()) {
+        if ($trophy->getTeam() == 0) {
             $this->soloTrophies[$trophy->getOwner()][] = $trophy;
         }
         else {
@@ -68,10 +64,23 @@ class Trophies{
         VALUES ('Highest Ranked Player!', 'img/first.png', 'SELECT playerID FROM players ORDER BY ranking DESC LIMIT 1' , NULL, 1);
         ");
 
+        $result['highest ranked team'] =$DB->query(" 
+        INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, type)
+        VALUES ('Highest Ranked Team!', 'img/first.png', 'SELECT teamID FROM teams ORDER BY ranking DESC LIMIT 1' , NULL, 2);
+        ");
+
+
+        /*
         $result['latest win'] =$DB->query("
         INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, type)
         VALUES ('Latest win', 'http://i.imgur.com/SpR4U.gif', 'SELECT winnerID FROM matches WHERE team = 0 ORDER BY timeCreated DESC LIMIT 1' , NULL, 1);
         ");
+
+        $result['taem latest win'] =$DB->query("
+        INSERT INTO trophies (name,imagePath,holderQuery,extraQuery, type)
+        VALUES ('Latest win', 'http://i.imgur.com/SpR4U.gif', 'SELECT winnerID FROM matches WHERE team = 1 ORDER BY timeCreated DESC LIMIT 1' , NULL, 2);
+        ");
+        */
 
 
         return $result;
