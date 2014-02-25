@@ -54,6 +54,8 @@ class Match{
     
         global $DB;
         
+        
+
         if($isTeam == true){
             $ratingQuery1 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team1."'";
             $ratingQuery2 = "SELECT ranking FROM teams WHERE teamID = '".(int)$team2."'";
@@ -188,6 +190,9 @@ class Match{
         
         $result = $DB->query($query);
         $matchID = mysql_insert_id();
+
+        //recalculate the trophies
+        $this->updateTrophies();
         
         return $matchID;
     }
@@ -463,7 +468,91 @@ class Match{
 
         echo"</table></div>";
     }
+
+    private function updateTrophies(){
+        global $DB;
+
+        #only solo trophies
+        $trophies = $DB->query("SELECT trophyID, holderQuery, type FROM trophies");
+
+        $insertIntoQuery = "INSERT INTO trophyholders (trophyID, holderID, team) VALUES ";
+        $values = "";
+
+        while ($trophy = mysql_fetch_assoc($trophies)) #foreach trophy
+            {
+                $holderID = $this->getOwner($trophy['holderQuery']);     
+                $trophyholders = $DB->query("   SELECT trophyID, holderID, fromDate 
+                                                FROM trophyholders 
+                                                WHERE trophyID = $trophy[trophyID] && toDate = '0000-00-00 00:00:00'
+                                                ORDER BY fromDate DESC 
+                                                LIMIT 1");
+
+                $existingTrophyRecord = mysql_fetch_assoc($trophyholders);
+
+                
+                switch ($trophy['type']) {
+                    case 1:
+                        //solo trophy
+                        $team = 0;
+                        break;
+                    case 2:
+                        //team trophy
+                        $team = 1;
+                        break;
+                    case 3:
+                        // Not implemented
+                        $team = null;
+                        break;
+                    default:
+                        $team = null;
+                }
+
+
+                if(!isset($existingTrophyRecord)){ #if trophy is new
+                    if (isset($holderID) && isset($team)) {
+                        $values .= "($trophy[trophyID],$holderID,$team),"; // Inserts will be bulk performed
+                    }
+                }
+                elseif($holderID != $existingTrophyRecord['holderID']){ #trophy ownership change
+                    if (isset($team))
+                    {
+                        $values .= "($trophy[trophyID],$holderID,$team),";
+                        $updateQuery = "    UPDATE trophyholders 
+                                            SET toDate = NOW() - INTERVAL 1 SECOND 
+                                            WHERE trophyID = $trophy[trophyID] 
+                                            && holderID = $existingTrophyRecord[holderID] 
+                                            && fromDate = '$existingTrophyRecord[fromDate]'";
+
+                        $DB->query($updateQuery); //Update is performed now 
+                    }
+                    
+                }
+            }  
+        $insertIntoQuery .= rtrim($values, ",") . ";";
+        $DB->query($insertIntoQuery); 
+
+
+    }
+
+    private function getOwner($query){
+       
+        global $DB;
+        $result = mysql_query($query);
+        if (!$result) 
+        {
+            return NULL;
+        }
+        else
+        {
+            $row = mysql_fetch_row($result);
+            return $ownedID = $row[0]; 
+        }          
+        
+    }
+
 }
+
+
     
 $match = new Match();
 ?>

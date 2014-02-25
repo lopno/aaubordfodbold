@@ -4,6 +4,8 @@ include_once "classes/DB.php";
 include_once "models/trophies.php";
 
 
+$trophies = new Trophies;
+
 if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
     
     printHeader("AAU Bordfodbold - Solo Leaderboard", "Solo Leaderboard");
@@ -12,7 +14,6 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
     $result = $DB->query("SELECT playerID, name, wins, losses, ranking FROM players ORDER BY ranking DESC");
     $odd = FALSE;
     
-    $soloTrophies = new Trophies;
 
   
     echo"<div align=\"center\">
@@ -74,8 +75,12 @@ if(!isset($_GET['type']) || $_GET['type'] == 'solo'){
                     echo "<td>";
                 }
             echo"{$row['ranking']}</td>";
-            if($rank == 1){
-                echo"<td><img src=\"".PATH_ROOT."img/boss.gif\" alt=\"LIKE A BOSS!\" title=\"LIKE A BOSS!\"/></td>";
+            if(isset($trophies->soloTrophies[$row['playerID']]))
+            {
+                foreach ($trophies->soloTrophies[$row['playerID']] as $key => $trophy) 
+                {
+                    echo "<td>" . $trophy->getTrophy() . "</td>";
+                }
             }
             echo"</tr>";
         }
@@ -88,6 +93,8 @@ elseif($_GET['type'] == 'team'){
     
     printLeaderboardLinks();
     
+
+
     $query = "SELECT teams.teamID, teams.ranking, teams.wins, teams.losses, players.playerID , players.name 
               FROM teams 
               JOIN memberof ON teams.teamID = memberof.teamID 
@@ -151,8 +158,16 @@ elseif($_GET['type'] == 'team'){
             } else{
                 echo "<td>";
             }
-            echo"{$row['ranking']}</td>
-                </tr>";
+            echo"{$row['ranking']}</td>";
+
+            if(isset($trophies->teamTrophies[$row['teamID']]))
+            {
+                foreach ($trophies->teamTrophies[$row['teamID']] as $key => $trophy) 
+                {
+                    echo "<td>" . $trophy->getTrophy() . "</td>";
+                }
+            }
+            echo "</tr>";
         }
     }
     $second = 0;

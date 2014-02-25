@@ -1,6 +1,7 @@
 <?php
 include_once "classes/DB.php";
 include_once "classes/match.php";
+include_once "models/trophies.php";
 
 class Admin{
 
@@ -18,6 +19,20 @@ class Admin{
 
     }
 
+    public function loadTrophies(){
+        $trophies = new Trophies;
+        return $this->formatQueryResultHTML($trophies->addTrophies());
+    }
+
+    public function formatQueryResultHTML($array)
+    {
+        $result = "";
+        foreach ($array as $queryNumber => $evaluation) {
+            $result .= "Query " . $queryNumber . ": " . $evaluation . "<br>";        
+        }
+        return $result;
+    }
+
     public function initTrophies(){
         global $DB;
 
@@ -25,30 +40,62 @@ class Admin{
             DROP TABLE IF EXISTS trophies;
 
             CREATE TABLE trophies (
-            trophyID INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(256) NOT NULL,
-            imagePath varchar(256) NOT NULL,
-            holderQuery VARCHAR(256) NOT NULL,
-            extraQuery VARCHAR(256) DEFAULT NULL,
-            team BOOLEAN NOT NULL);
+              trophyID INT PRIMARY KEY AUTO_INCREMENT,
+              name VARCHAR(256) NOT NULL,
+              imagePath varchar(256) NOT NULL,
+              holderQuery VARCHAR(256) NOT NULL,
+              extraQuery VARCHAR(256) DEFAULT NULL,
+              type INT NOT NULL
+            );
 
+            DROP TABLE IF EXISTS trophytype;
+            CREATE TABLE trophytype (
+              trophytypeID INT PRIMARY KEY AUTO_INCREMENT,
+              trophytype VARCHAR(64)
+            );
 
-            DROP TABLE IF EXISTS trophyholders;
-            CREATE TABLE trophyholders(
+            INSERT INTO trophytype VALUES (1,'solo'),(2,'team'),(3,'mixed'); 
+
+            CREATE TABLE IF NOT EXISTS trophyholders(
               trophyID INT,
-              playerID INT,
-              fromDate TIMESTAMP,
-              toDate TIMESTAMP,
-              PRIMARY KEY(trophyID, playerID)
+              holderID INT,
+              team BOOLEAN DEFAULT 0,
+              `fromDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              `toDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+              PRIMARY KEY(trophyID, holderID,fromDate)
               );
             ");
-
-
+        $trophies = new Trophies;
+        $trophies->addTrophies();
+        return $this->formatQueryResultHTML($trophies->addTrophies());
+        
     }
+
 
 
     public function recalculateStreak(){
         global $DB;
+
+        /*
+        $firstPlace = new Trophy(
+            "LIKE A BOSS!",
+            "http://i.imgur.com/SpR4U.gif", 
+            "SELECT playerID FROM players ORDER BY ranking DESC LIMIT 1");
+        $this->addToSoloTrophies($firstPlace);
+
+        $largetWinningSpree = new Trophy(
+            "Largest Winning Spree!",
+            "img/achievement_48_hot.png", 
+            "SELECT playerID FROM soloStreak WHERE win = 1 ORDER BY streak DESC, startDate DESC LIMIT 1;",
+            "SELECT streak FROM soloStreak WHERE win = 1 ORDER BY streak DESC, startDate DESC LIMIT 1;");
+        $this->addToSoloTrophies($largetWinningSpree);
+
+        $largetLoosingSpree = new Trophy(
+            "Largest Losing Spree!",
+            "img/achievement_48_hot.png", 
+            "SELECT playerID FROM soloStreak WHERE win = 0 ORDER BY streak DESC, startDate DESC LIMIT 1;",
+            "SELECT streak FROM soloStreak WHERE win = 0 ORDER BY streak DESC, startDate DESC LIMIT 1;");
+        $this->addToSoloTrophies($largetLoosingSpree); */
 
         $query1 = $DB->query("
             CREATE TABLE IF NOT EXISTS soloStreak (

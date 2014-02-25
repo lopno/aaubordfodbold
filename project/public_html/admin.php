@@ -3,7 +3,7 @@
 include_once "functions/html.php";
 include_once "classes/DB.php";
 include_once "classes/admin.php";
-require_once('config.php');
+require_once('../config.php');
 
 function generateHash($pass)
 {
@@ -66,7 +66,7 @@ function printLogoutButton()
 
 
 //Logged in
-if(($_POST['user'] && $_POST['pass'] && login($_POST['user'], $_POST['pass'])) || $_SESSION['loggedIn'])
+if((isset($_POST['user']) && isset($_POST['pass']) && login($_POST['user'], $_POST['pass'])) || $_SESSION['loggedIn'])
 {
     if(isset($_POST['logout']))
     {
@@ -91,18 +91,25 @@ if(($_POST['user'] && $_POST['pass'] && login($_POST['user'], $_POST['pass'])) |
         $admin->recalculate();
         echo 'Matches recalculated!';
         break;
-    /*case 'second' :
-        $admin->otherFunction();
+    case 'iniTrophies' :
+        echo 'Trophy tables are created and trophies loaded<br>';
+        echo $admin->initTrophies();
+        
         break;
-    */
+    case 'loadTrophies' :
+        echo 'Trophies loaded<br>';
+        echo $admin->loadTrophies();
+        break;
+    
 
     default :
         echo 'Nothing happened';
     }
 
     echo '<hr>
-    <a href="?run=first">Recalculate</a>
-    <br>
+    <a href="?run=first">Recalculate</a><br>
+    <a href="?run=iniTrophies">Initilize trophies</a><br>
+    <a href="?run=loadTrophies">Reload trophies</a><br>
     <a href="?run=0">Refresh Page</a>';
 }
 
