@@ -33,28 +33,17 @@ if($blank)
     $playerArray[0]['name'] = "Choose Player...";
     $playerArray[0]['playerID'] = -1;
 
-    while ($row = mysql_fetch_array($result, MYSQL_BOTH)) {
-
+    while ($row = mysql_fetch_array($result, MYSQL_BOTH)) 
+    {
         $playerArray[] = $row;
-
     }
 
-    
-
     echo "<form action=\"{$_SERVER['PHP_SELF']}\" method=\"GET\">
-
-
-
     <div align=\"center\">";
-
-
-
     echo "<select name=\"id\">";
 
     foreach($playerArray as $player){
-
         echo"<option value=\"{$player['playerID']}\">{$player['name']}</option>";
-
     }
 
     echo"</select>
