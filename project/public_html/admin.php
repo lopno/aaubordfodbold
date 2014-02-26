@@ -3,7 +3,7 @@
 include_once "functions/html.php";
 include_once "classes/DB.php";
 include_once "classes/admin.php";
-require_once('../config.php');
+require_once('config.php');
 
 function generateHash($pass)
 {
@@ -66,7 +66,7 @@ function printLogoutButton()
 
 
 //Logged in
-if((isset($_POST['user']) && isset($_POST['pass']) && login($_POST['user'], $_POST['pass'])) || $_SESSION['loggedIn'])
+if((isset($_POST['user']) && isset($_POST['pass']) && login($_POST['user'], $_POST['pass'])) || isset($_SESSION['loggedIn']))
 {
     if(isset($_POST['logout']))
     {
